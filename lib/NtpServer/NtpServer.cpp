@@ -15,18 +15,29 @@ if (!getLocalTime(&timeinfo)) {
   }
     return days[timeinfo.tm_wday];
 }
-
 int Ntp::getHours(){
-
     struct tm timeinfo;
+    if (!getLocalTime(&timeinfo)) {
+        Serial.println("❌ Не удалось получить время.");
+        return 0;  // Или любое значение по умолчанию при ошибке
+    }
     return timeinfo.tm_hour;
 }
 
 int Ntp::getMinutes(){
     struct tm timeinfo;
-     return timeinfo.tm_min;
+    if (!getLocalTime(&timeinfo)) {
+        Serial.println("❌ Не удалось получить время.");
+        return 0;
+    }
+    return timeinfo.tm_min;
 }
+
 int Ntp::getSeconds(){
     struct tm timeinfo;
+    if (!getLocalTime(&timeinfo)) {
+        Serial.println("❌ Не удалось получить время.");
+        return 0;
+    }
     return timeinfo.tm_sec;
 }

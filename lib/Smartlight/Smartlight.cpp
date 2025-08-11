@@ -10,7 +10,7 @@
 #define LAMP1_END 58
 #define LAMP2_START 59
 #define LAMP2_END 118
-
+unsigned long lastUpdateRainbow = 0;
 
 uint8_t colorIndex = 0;
 uint8_t wavePos = 0;
@@ -336,13 +336,14 @@ void Smartlight::Random(){
 
 
 void Smartlight::rainbowFlow() {
-  fill_rainbow(leds, NUM_LEDS, hue, 7);
-  FastLED.show();
-  hue++;  // двигаем радугу
-  delay(20);
+  unsigned long now = millis();
+  if (now - lastUpdateRainbow > 20) {  // обновлять примерно каждые 20 мс
+    fill_rainbow(leds, NUM_LEDS, hue, 7);
+    FastLED.show();
+    hue++;  // двигаем радугу
+    lastUpdateRainbow = now;
+  }
 }
-
-
 
 
 

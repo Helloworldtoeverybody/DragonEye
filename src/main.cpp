@@ -31,6 +31,8 @@
 const char* mqtt_server = "192.168.100.15";  // IP телефона с Mosquitto
 const int mqtt_port = 1883;               // локальный порт Mosquitto
 
+unsigned long lastUpdate_disp = 0;
+const unsigned long interval_disp = 1000; // 1 секунда
 
 int effect = 0;
 
@@ -235,12 +237,38 @@ void reconnect() {
 
 
 void loop() {
-
-  int FanPower = ui.fan_power;
-    ledcWrite(ledChannel, FanPower);
   int now_hour = ntpTime.getHours();
   int now_minute = ntpTime.getMinutes();
   int now_second = ntpTime.getSeconds();
+
+
+
+
+ unsigned long now = millis();
+  if (now - lastUpdate_disp >= interval_disp) {
+    lastUpdate_disp = now;
+    char timeStr[6];
+    sprintf(timeStr, "%02d:%02d", now_hour, now_minute);
+    disp.clearBuffer();
+    disp.setFont(u8g2_font_helvB24_tf);//u8g2_font_helvB24_te
+    disp.setCursor(0, 50);
+    disp.print(timeStr);
+    disp.sendBuffer();
+  }
+/*
+    char timeStr[6];
+    sprintf(timeStr, "%02d:%02d", now_hour, now_minute);
+
+    disp.clearBuffer();
+    disp.setFont(u8g2_font_helvB24_tf);
+    disp.setCursor(0, 40);
+    disp.print("Hawai");
+    disp.sendBuffer();
+  */
+
+
+  int FanPower = ui.fan_power;
+    ledcWrite(ledChannel, FanPower);
 
 hub.tick();
 
@@ -255,18 +283,6 @@ plant.update();
     reconnect();
   }
   client.loop();
-
-
-  char timeStr[6];
-sprintf(timeStr, "%02d:%02d", now_hour, now_minute);
-
-  // Отрисовка
-  disp.clearBuffer();
-  disp.setFont(u8g2_font_helvB24_tf); 
-  disp.setCursor(0, 40); //50                  
-  disp.print(timeStr);
-  disp.sendBuffer();
-
 
 
 
