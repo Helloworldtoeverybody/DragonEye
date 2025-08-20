@@ -62,7 +62,7 @@
 
 -**Видео**: 
 - **Связь**: [dvorakounikita11@gmail.com]  
-- **Репозиторий**: [(https://github.com/Helloworldtoeverybody/DragonEye)]
+- **Репозиторий**: [https://github.com/Helloworldtoeverybody/DragonEye]
 
 ---
 
