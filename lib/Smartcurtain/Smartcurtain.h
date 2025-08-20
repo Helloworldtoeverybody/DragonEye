@@ -13,6 +13,7 @@ public:
     void setPosition(int pos);
     void update();
     int top_point = 0;
+    bool change_flag = 0;
     
 
 private:
@@ -26,6 +27,7 @@ bool top_flag = 0;
     int currentPosition;
     bool isMoving;
     unsigned long lastUpdate;
+    unsigned long timer;
 
 };
 

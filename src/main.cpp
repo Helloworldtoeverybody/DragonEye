@@ -20,13 +20,13 @@
 #include <Adafruit_SSD1306.h>
 #include "NtpServer.h"     // здесь важно, чтобы файл назывался именно так!
 #include "Autowattering.h"
+#include "FanController.h"
 
 
 
 
-
-#define AP_SSID "11PM" //11PM//POCO C65 //NIKITOS//iPhone
-#define AP_PASS "251161251161"//  "251161251161"//ig5dpur4bi7svpd//nikita1234//210587210587
+#define AP_SSID "avtomatika" //11PM//POCO C65 //NIKITOS//iPhone//
+#define AP_PASS "37123712"//  "251161251161"//ig5dpur4bi7svpd//nikita1234//210587210587//
 
 const char* mqtt_server = "192.168.100.15";  // IP телефона с Mosquitto
 const int mqtt_port = 1883;               // локальный порт Mosquitto
@@ -37,14 +37,15 @@ const unsigned long interval_disp = 1000; // 1 секунда
 int effect = 0;
 
 byte brightness = 0;
-
+/*
 //Fan settings
 const int freq =20000;
 const int ledChannel = 0;
 const int resolution = 10;
 const int ledPin = 26;//Fan pin
-
-/////////////////////Objects/////////////////////////////////////
+*/
+/////////////FanController fanController(4, 26, 20000, 0, 10, 60000);////////Objects/////////////////////////////////////
+FanController fanController(34, 33);
 Smartlight lamp;
 SmartCurtains curtain(14, 17, 26, 12, 25);//close_pin, open_pin, topLevel detector(hall sensor)
 Wifi wifi(AP_SSID, AP_PASS);
@@ -101,6 +102,7 @@ switch (curtain_power)
 case 1 :
 
 curtain.open();
+curtain.change_flag = 1;
 Serial.println("Curtain openning");
   
   break;
@@ -153,9 +155,10 @@ if (strcmp(topic, "color") == 0) {
 /////////////////////////////Setup////////////////////////
 void setup(){
 Serial.begin(115200);
-
-ledcSetup(ledChannel, freq, resolution);
-  ledcAttachPin(ledPin, ledChannel);
+  fanController.begin();
+  fanController.setFanSpeed(1023, 1);
+//ledcSetup(ledChannel, freq, resolution);
+  //ledcAttachPin(ledPin, ledChannel);
   wifi.begin();
 
 
@@ -267,23 +270,27 @@ void loop() {
   */
 
 
-  int FanPower = ui.fan_power;
-    ledcWrite(ledChannel, FanPower);
+ // int FanPower = ui.fan_power;
+   // ledcWrite(ledChannel, FanPower);
 
 hub.tick();
 
   lamp.update();
   curtain.update();
-plant.update();
+
   
 
 
-
+plant.update();
+/*
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
+*/
+  fanController.update();
 
+  //Serial.println(fanController.getTemperature());
 
 
 
@@ -333,5 +340,3 @@ plant.update();
 
 
 */
-
-

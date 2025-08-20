@@ -3,6 +3,9 @@
 #include <Smartlight.h>
 #include<GyverHub.h>
 #include "Autowattering.h"
+#include <FanController.h>
+
+extern FanController fanController;
 extern Smartlight lamp;
 
 extern Wattering plant;
@@ -188,8 +191,8 @@ void GyverHubUI::buildWatterController(gh::Builder& b) {
             gh::Col c(b);
            for (int i = 0; i < 7; i++) {
             if (b.Flags().text(days[i]).size(3).color(gh::Colors::Yellow).click()) {
-                Serial.println("Flag #");
-                Serial.print(days[i]);
+                
+                
                 flags[i] = !flags[i];
                 plant.updateFlags(days[i], flags[i], plant_hour, plant_delay);
         }
@@ -201,9 +204,11 @@ void GyverHubUI::buildWatterController(gh::Builder& b) {
 
 
 void GyverHubUI::buildFan(gh::Builder& b) {
-    if (b.Slider_("Fan", &fan_power).click()) {
-        fan_power = map(fan_power, 0, 100, 0, 255);
-        Serial.print("Fan power set to: ");
+    if (b.Slider_("Fan_brightness", &fan_power).click()) {
+        fan_power = map(fan_power, 0, 100, 0, 1023);
+        fanController.setFanSpeed(fan_power, 1);
+        Serial.print("Fan speed set to: ");
         Serial.println(fan_power);
     }
+    b.Switch_("Auto", &fanController.auto_fan).color(gh::Colors::Yellow).icon("f73d");
 }

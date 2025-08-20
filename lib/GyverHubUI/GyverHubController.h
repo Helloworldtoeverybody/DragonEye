@@ -10,7 +10,7 @@ class GyverHubUI{
 
         const char* days[7] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
         bool flags[7];
-
+        bool auto_fan = 1;
         int bright = 0;
         int power = 0;
         int hue = 0;

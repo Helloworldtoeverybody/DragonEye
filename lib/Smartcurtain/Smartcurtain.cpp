@@ -3,7 +3,6 @@
 
 
 
-
 SmartCurtains::SmartCurtains(int openPin, int closePin, int b_openPin, int b_closePin, int top)
 : openPin(openPin), closePin(closePin), b_openPin(b_openPin),  b_closePin(b_closePin), top(top), targetPosition(0), currentPosition(0), isMoving(false), lastUpdate(0)
 {}
@@ -25,12 +24,7 @@ void SmartCurtains::begin(){
 
 
 void SmartCurtains::open() {
-    /*
-    digitalWrite(openPin, HIGH);
-    digitalWrite(closePin, LOW);
-    isMoving = true;
-*/
-  
+
 
     digitalWrite(openPin, HIGH);
     digitalWrite(closePin, LOW);
@@ -76,37 +70,28 @@ void SmartCurtains::setPosition(int pos) {
 
 void SmartCurtains::update() {
 
-    top_point = digitalRead(top);//achieving top level detector
+    top_point = !digitalRead(top);//achieving top level detector
 
-if(!top_point){
-    top_flag = 1;
+
+    if (change_flag){
+        top_flag  =0;
+        timer = millis();
+        if(millis()-timer > 4000){
+            if(top_point){
+                top_flag = 1;
+
     
 }
+        }
+    }    
+
+
+
 
 if(top_flag){
     stop();
     top_flag = 0;
 }
-
-    /*
-    if (!isMoving) return;  // Если шторы не двигаются — просто выходим
-
-    // Проверяем время, чтобы делать обновление не слишком часто
-    if (millis() - lastUpdate > 100) {  // Обновляем раз в 100 мс
-        lastUpdate = millis();
-
-        if (currentPosition < targetPosition) {
-            currentPosition++;  // Шторы немного открылись
-        } else if (currentPosition > targetPosition) {
-            currentPosition--;  // Шторы немного закрылись
-        }
-
-        // Если достигли цели — останавливаем движение
-        if (currentPosition == targetPosition) {
-            stop(); q
-        }
-    }
-    */
 
 }
 

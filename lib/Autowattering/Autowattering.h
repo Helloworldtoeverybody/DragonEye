@@ -27,6 +27,10 @@ class Wattering{
         bool radio_flag;
         int plant_delay = 1;
         bool flag = 0;
+
+        int last_hour;
+
+
        
         
 
