@@ -20,24 +20,32 @@ void btn_cb_Fireflies(){
 
 void btn_cb_Meteor(){
      lamp.setEffect(1);
+     //rainbow meteor
 }
 void btn_cb_fire() {
        
-   
+   lamp.setEffect(10);
 
 }
 
 void btn_cb_hello() {
        
-    lamp.setEffect(2);
+    lamp.setEffect(2);//dragon fire
 
 }
 void btn_cb_rainbow() {
        
     lamp.setEffect(3);
-    Serial.println("Effect 3");
+    Serial.println("Effect  green leafes from tree");
 
 }
+void btn_cb_random() {
+       
+    lamp.setEffect(8);
+    Serial.println("Effect random");
+
+}
+
 void btn_cb_sky() {
        
     lamp.setEffect(4);
@@ -161,7 +169,7 @@ void GyverHubUI::buildColorButtonsRow2(gh::Builder& b) {
     b.Button().attach(btn_cb_hello).color(gh::Colors::Cream).icon("f714");
     b.Button().attach(btn_cb_off).color(gh::Colors::Red).icon("f00d");
     
-    b.Button().attach(btn_cb_rainbow).color(gh::Colors::Obsidian).icon("f074");
+    b.Button().attach(btn_cb_random).color(gh::Colors::Obsidian).icon("f074");
 }
 
 

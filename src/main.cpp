@@ -25,8 +25,8 @@
 
 
 
-#define AP_SSID "avtomatika" //11PM//POCO C65 //NIKITOS//iPhone//
-#define AP_PASS "37123712"//  "251161251161"//ig5dpur4bi7svpd//nikita1234//210587210587//
+#define AP_SSID "11PM" //11PM//POCO C65 //NIKITOS//iPhone//avtomatika
+#define AP_PASS "251161251161"//  "251161251161"//ig5dpur4bi7svpd//nikita1234//210587210587//37123712
 
 const char* mqtt_server = "192.168.100.15";  // IP телефона с Mosquitto
 const int mqtt_port = 1883;               // локальный порт Mosquitto
@@ -156,16 +156,9 @@ if (strcmp(topic, "color") == 0) {
 void setup(){
 Serial.begin(115200);
   fanController.begin();
-  fanController.setFanSpeed(1023, 1);
+  fanController.setFanSpeed(200, 1);
 //ledcSetup(ledChannel, freq, resolution);
   //ledcAttachPin(ledPin, ledChannel);
-  wifi.begin();
-
-
-  while (wifi.isConnected() != 1) {
-    delay(500);
-    Serial.print(".");
-  }
 
   
 lamp.begin();
@@ -247,9 +240,9 @@ void loop() {
 
 
 
- unsigned long now = millis();
-  if (now - lastUpdate_disp >= interval_disp) {
-    lastUpdate_disp = now;
+ 
+  if (millis()- lastUpdate_disp >= interval_disp) {
+    lastUpdate_disp = millis();
     char timeStr[6];
     sprintf(timeStr, "%02d:%02d", now_hour, now_minute);
     disp.clearBuffer();
@@ -258,17 +251,12 @@ void loop() {
     disp.print(timeStr);
     disp.sendBuffer();
   }
-/*
+
     char timeStr[6];
     sprintf(timeStr, "%02d:%02d", now_hour, now_minute);
 
-    disp.clearBuffer();
-    disp.setFont(u8g2_font_helvB24_tf);
-    disp.setCursor(0, 40);
-    disp.print("Hawai");
-    disp.sendBuffer();
-  */
 
+  
 
  // int FanPower = ui.fan_power;
    // ledcWrite(ledChannel, FanPower);
@@ -282,12 +270,12 @@ hub.tick();
 
 
 plant.update();
-/*
+
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
-*/
+
   fanController.update();
 
   //Serial.println(fanController.getTemperature());

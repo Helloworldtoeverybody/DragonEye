@@ -28,7 +28,7 @@ CRGB leds[NUM_LEDS];
 
 
 
-
+byte random_effect = 1;
 
 
 
@@ -194,7 +194,7 @@ void Smartlight::update() {
             
             break;
         case 3:
-             dualLampEffect();
+             LeafNoiseCanopy();
             break;
         case 4:
           rainbowFlow();
@@ -206,8 +206,21 @@ void Smartlight::update() {
           
           white();
           break;
+          case 7:
+          
+          
+          break;
+          case 8:
+          
+          random_eff();
 
+          break;
 
+       case 10:
+          
+          random_eff();
+
+          break;
 
 
         default:
@@ -324,14 +337,6 @@ switch (tempIndex) {
 
 
 
-void Smartlight::Random(){
-
- 
-  EVERY_N_MILLISECONDS(10000){
-    currenteffect = random(0, 4);
-    
-  }
-}
 
 
 
@@ -434,3 +439,210 @@ void Smartlight::Fireflies(){
 
 }
 
+// ==== FastLED setup ====
+// ==== Palettes ====
+DEFINE_GRADIENT_PALETTE(sunset_gp) {
+  0,   255, 60, 0,
+  100, 255, 0, 80,
+  200, 20,  0, 150,
+  255, 0,   0, 0
+};
+CRGBPalette16 sunsetPal = sunset_gp;
+
+DEFINE_GRADIENT_PALETTE(cotton_gp) {
+  0,   255, 150, 200,
+  128, 100, 200, 255,
+  255, 255, 150, 200
+};
+CRGBPalette16 cottonPal = cotton_gp;
+
+// ==== Timers ====
+uint8_t t1 = 0;
+uint8_t t2 = 0;
+uint8_t t3 = 0;
+uint8_t t4 = 0;
+uint8_t t5 = 0, t6 = 0, t7 = 0, t8 = 0;
+// ==== Effects (no args) ====
+void oceanFade() {
+  t1++;
+  for (uint16_t i = 0; i < NUM_LEDS; i++) {
+    leds[i] = ColorFromPalette(OceanColors_p, i + t1);
+  }
+}
+
+void sunsetFlow() {
+  t2 += 2;
+  for (uint16_t i = 0; i < NUM_LEDS; i++) {
+    leds[i] = ColorFromPalette(sunsetPal, i * 3 + t2, 255, LINEARBLEND);
+  }
+}
+
+void cottonCandy() {
+  t3++;
+  for (uint16_t i = 0; i < NUM_LEDS; i++) {
+    uint8_t wave = sin8(i * 8 + t3);
+    leds[i] = ColorFromPalette(cottonPal, wave);
+  }
+}
+
+void lavaPulse() {
+  t4 += 2;
+  for (uint16_t i = 0; i < NUM_LEDS; i++) {
+    leds[i] = ColorFromPalette(LavaColors_p, t4 + i * 2, 255, LINEARBLEND);
+  }
+}
+
+
+
+
+// 🌊 Ocean Wave Fade
+void OceanWaveFade() {
+  fill_palette(leds, NUM_LEDS,
+               t5,                         // phase counter
+               255 / NUM_LEDS,
+               OceanColors_p,
+               255,
+               LINEARBLEND);
+  t5++;
+}
+
+// 🔥 Lava Pulse
+void LavaPulse() {
+  uint8_t bright = beatsin8(12, 50, 255);   // 12 BPM = slower pulse
+  fill_palette(leds, NUM_LEDS,
+               t6,
+               255 / NUM_LEDS,
+               HeatColors_p,
+               bright,
+               LINEARBLEND);
+  t6++;
+}
+
+// ✨ Star Twinkle Field
+void StarTwinkleField() {
+  fadeToBlackBy(leds, NUM_LEDS, 10);
+  leds[random16(NUM_LEDS)] += CRGB::White;
+  t7++;
+}
+
+// 🌈 Double Rainbow Flow
+void DoubleRainbowFlow() {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = ColorFromPalette(RainbowColors_p, i * 4 + t8, 255);
+  }
+  for (int i = NUM_LEDS / 2; i < NUM_LEDS; i++) {
+    leds[i] = ColorFromPalette(RainbowColors_p, i * 4 - t8, 255);
+  }
+  t8++;
+}
+
+
+
+
+// Tunables
+static const uint16_t UPDATE_MS     = 60;   // frame pacing (bigger = slower)
+static const uint8_t  SPATIAL_SCALE = 15;   // size of leaf patches
+static const uint8_t  TIME_STEP     = 1;    // evolution speed
+static const uint8_t  SWAY_BPM      = 6;    // global brightness sway
+
+// Deep green → yellow gradient
+DEFINE_GRADIENT_PALETTE( DeepLeaf_gp ) {
+  0,    0,  16,  0,    // very dark green
+  80,   0,  80,  0,    // mid-forest green
+  160,  20,160, 20,    // bright lush green
+  220, 180,255, 40,    // leaf under sun
+  255, 255,255,  0     // full yellow highlight
+};
+CRGBPalette16 DeepLeafPal = DeepLeaf_gp;
+
+// State
+static uint32_t lastUpdates = 0;
+static uint16_t t = 0;          // noise time phase
+static uint16_t highlightT = 5000;  // separate phase for yellow dapple
+
+
+
+void Smartlight::LeafNoiseCanopy() {
+  uint32_t now = millis();
+  if (now - lastUpdates < UPDATE_MS) return;
+  lastUpdates = now;
+  t += TIME_STEP;
+  highlightT += TIME_STEP / 2;  // slower phase for sun-dapple
+
+  // global brightness sway like a soft breeze
+  uint8_t sway = beatsin8(SWAY_BPM, 130, 200);
+
+  for (uint16_t i = 0; i < NUM_LEDS; i++) {
+    // Base canopy motion
+    uint16_t x = i * SPATIAL_SCALE;
+    uint8_t noiseVal = inoise8(x, t);
+    uint8_t idx = scale8(noiseVal, 240);   // avoid muddy extremes
+
+    // Build target color from deep leaf palette
+    CRGB target = ColorFromPalette(DeepLeafPal, idx, sway, LINEARBLEND);
+
+    // Yellow dapple highlights
+    uint8_t hl = inoise8(x + 300, highlightT);
+    if (hl > 200) {
+      // blend a touch of yellow where noise peaks
+      nblend(target, CRGB::Yellow, map(hl, 200, 255, 50, 200));
+    }
+
+    // Ease into new color for silky smooth motion
+    nblend(leds[i], target, 60);
+  }
+
+  // tie neighboring pixels together like clustered leaves
+  blur1d(leds, NUM_LEDS, 32);
+}
+
+
+
+
+void Smartlight::random_eff(){
+
+ 
+  EVERY_N_MILLISECONDS(3000){
+    random_effect = random(1, 9);
+    
+  }
+
+
+
+  switch (random_effect) {
+    
+    case 1:
+      
+      oceanFade();
+      break;
+    case 2:
+      
+      sunsetFlow();
+      break;
+    case 3:
+      
+      cottonCandy();
+      break;
+    case 4:
+      
+      lavaPulse();
+      break;
+    
+    case 5:
+      
+      OceanWaveFade();
+      break;
+    case 6:
+      
+      LavaPulse();
+      break;
+    case 7:
+      
+      StarTwinkleField();
+      break;
+    case 8:
+      
+      DoubleRainbowFlow();
+      break;
+  }
+}

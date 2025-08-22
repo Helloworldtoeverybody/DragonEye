@@ -37,6 +37,8 @@ private:
     void off();
     void Meteor();
     void Fireflies();
+    void random_eff();
+    void LeafNoiseCanopy();
     
 
 

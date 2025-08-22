@@ -31,7 +31,8 @@ class Wattering{
         int last_hour;
 
 
-       
+  unsigned long  lastSendTime   = 0;       // время последней отправки
+  const unsigned long retryInterval = 15000; // 15 000 мс между попытками
         
 
 
