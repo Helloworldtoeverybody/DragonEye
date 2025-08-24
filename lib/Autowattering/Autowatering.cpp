@@ -121,7 +121,7 @@ void Wattering::update() {
     unsigned long now = millis();
 
     // Первая отправка сразу, последующие – по таймауту
-    if (sendAttempts == 0 || now - lastSendTime >= retryInterval) {
+    if (sendAttempts == 0 and now - lastSendTime >= retryInterval) {
       myData.start_flag  = true;
       myData.plant_delay = plant_delay;
 
@@ -153,7 +153,3 @@ void Wattering::update() {
 void Wattering::plant() {
   Serial.println("💧 Planting triggered locally (optional).");
 }
-
-
-
-

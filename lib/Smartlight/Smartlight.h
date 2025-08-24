@@ -39,7 +39,8 @@ private:
     void Fireflies();
     void random_eff();
     void LeafNoiseCanopy();
-    
+    void ocean();
+    void stars();
 
 
 };

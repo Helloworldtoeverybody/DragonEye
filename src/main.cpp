@@ -156,7 +156,7 @@ if (strcmp(topic, "color") == 0) {
 void setup(){
 Serial.begin(115200);
   fanController.begin();
-  fanController.setFanSpeed(200, 1);
+  fanController.setFanSpeed(50, 1);
 //ledcSetup(ledChannel, freq, resolution);
   //ledcAttachPin(ledPin, ledChannel);
 

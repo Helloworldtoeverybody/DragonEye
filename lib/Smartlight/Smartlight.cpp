@@ -185,7 +185,7 @@ void Smartlight::update() {
             Fireflies();
             break;
         case 1:
-          Meteor();
+          stars();
             
             break;
         case 2:
@@ -218,7 +218,7 @@ void Smartlight::update() {
 
        case 10:
           
-          random_eff();
+          ocean();
 
           break;
 
@@ -471,7 +471,7 @@ void oceanFade() {
 }
 
 void sunsetFlow() {
-  t2 += 2;
+  t2 += 1;
   for (uint16_t i = 0; i < NUM_LEDS; i++) {
     leds[i] = ColorFromPalette(sunsetPal, i * 3 + t2, 255, LINEARBLEND);
   }
@@ -486,7 +486,7 @@ void cottonCandy() {
 }
 
 void lavaPulse() {
-  t4 += 2;
+  t4 += 1;
   for (uint16_t i = 0; i < NUM_LEDS; i++) {
     leds[i] = ColorFromPalette(LavaColors_p, t4 + i * 2, 255, LINEARBLEND);
   }
@@ -602,7 +602,7 @@ void Smartlight::LeafNoiseCanopy() {
 void Smartlight::random_eff(){
 
  
-  EVERY_N_MILLISECONDS(3000){
+  EVERY_N_MILLISECONDS(30000){
     random_effect = random(1, 9);
     
   }
@@ -645,4 +645,23 @@ void Smartlight::random_eff(){
       DoubleRainbowFlow();
       break;
   }
+}
+
+
+void Smartlight::ocean(){
+
+ fill_palette(leds, NUM_LEDS,
+               t5,                         // phase counter
+               255 / NUM_LEDS,
+               OceanColors_p,
+               255,
+               LINEARBLEND);
+t5 = t5 + 1;
+}
+
+
+void Smartlight::stars(){
+    fadeToBlackBy(leds, NUM_LEDS, 10);
+  leds[random16(NUM_LEDS)] += CRGB::White;
+  t7++;
 }

@@ -156,17 +156,18 @@ void GyverHubUI::buildHueSlider(gh::Builder& b) {
 
 void GyverHubUI::buildColorButtonsRow1(gh::Builder& b) {
     gh::Row r(b, 1);
-    b.Button().attach(btn_cb_Meteor).color(gh::Colors::Brown).icon("f3ed");
-    b.Button().attach(btn_cb_white).color(gh::Colors::Yellow).icon("f185");
+    b.Button().attach(btn_cb_Meteor).color(gh::Colors::Brown).icon("f0e9");
+
+    b.Button().attach(btn_cb_hello).color(gh::Colors::Yellow).icon("f6d5");
     b.Button().attach(btn_cb_Fireflies).color(gh::Colors::Cream).icon("f0c2");
-    b.Button().attach(btn_cb_rainbow).color(gh::Colors::Brown).icon("f75b");
+    b.Button().attach(btn_cb_rainbow).color(gh::Colors::Green).icon("f06c");
 }
 
 
 void GyverHubUI::buildColorButtonsRow2(gh::Builder& b) {
         gh::Row r(b, 1);
-    b.Button().attach(btn_cb_fire).color(gh::Colors::Yellow).icon("f7e4");
-    b.Button().attach(btn_cb_hello).color(gh::Colors::Cream).icon("f714");
+    b.Button().attach(btn_cb_fire).color(gh::Colors::Yellow).icon("f773");
+        b.Button().attach(btn_cb_white).color(gh::Colors::Cream).icon("f0eb");
     b.Button().attach(btn_cb_off).color(gh::Colors::Red).icon("f00d");
     
     b.Button().attach(btn_cb_random).color(gh::Colors::Obsidian).icon("f074");
@@ -212,7 +213,7 @@ void GyverHubUI::buildWatterController(gh::Builder& b) {
 
 
 void GyverHubUI::buildFan(gh::Builder& b) {
-    if (b.Slider_("Fan_brightness", &fan_power).click()) {
+    if (b.Slider_("Fan_brightness", &fan_power).color(gh::Colors::Yellow).click()) {
         fan_power = map(fan_power, 0, 100, 0, 1023);
         fanController.setFanSpeed(fan_power, 1);
         Serial.print("Fan speed set to: ");
