@@ -12,12 +12,13 @@ public:
     void stop();
     void setPosition(int pos);
     void update();
-    int top_point = 0;
-    bool change_flag = 0;
+    
+
+    unsigned long time_out;
     
 
 private:
-bool top_flag = 0;
+
     int openPin;
     int closePin;
     int b_openPin;
@@ -28,6 +29,8 @@ bool top_flag = 0;
     bool isMoving;
     unsigned long lastUpdate;
     unsigned long timer;
+
+    int top_point = 50;
 
 };
 

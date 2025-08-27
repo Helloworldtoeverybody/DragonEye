@@ -47,7 +47,7 @@ const int ledPin = 26;//Fan pin
 /////////////FanController fanController(4, 26, 20000, 0, 10, 60000);////////Objects/////////////////////////////////////
 FanController fanController(34, 33);
 Smartlight lamp;
-SmartCurtains curtain(14, 17, 26, 12, 25);//close_pin, open_pin, topLevel detector(hall sensor)
+SmartCurtains curtain(12, 17, 26, 12, 25);//close_pin, open_pin, topLevel detector(hall sensor)
 Wifi wifi(AP_SSID, AP_PASS);
 
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C disp(U8G2_R0);
@@ -80,6 +80,15 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.printf("Brightness -> %d\n", brightness);
     
   }
+
+  if (String(topic) == "fan_value") {
+    int fan_value = msg.toInt();
+    fan_value = map(fan_value, 0, 100, 0, 1023);
+    fanController.setFanSpeed(fan_value, 1); 
+    Serial.printf("Fan value -> %d\n", fan_value);
+    
+  }
+
   if (String(topic) == "power") {
     bool state = msg.toInt();
       lamp.setPower(state);
@@ -102,12 +111,13 @@ switch (curtain_power)
 case 1 :
 
 curtain.open();
-curtain.change_flag = 1;
+
 Serial.println("Curtain openning");
   
   break;
 case 2:
   curtain.close();
+  
   Serial.println("Curtain closing");
   break;
 case 3:
@@ -122,8 +132,37 @@ default:
 
 
 
-    Serial.printf("Curtain_power -> %d\n", curtain_power);
+    Serial.printf("Curtain_value -> %d\n", curtain_power);
   }
+
+
+
+
+  if (String(topic) == "curtains_value") {
+    bool curtain_value = msg.toInt();
+
+switch (curtain_value)
+{
+case 1 :
+
+curtain.open();
+
+Serial.println("Curtain openning");
+  
+  break;
+case 0:
+  curtain.close();
+  
+  Serial.println("Curtain closing");
+  break;
+}
+   
+
+
+
+    Serial.printf("Curtain_power -> %d\n", curtain_value);
+  }
+
 
 
 //lamp_topics
@@ -278,7 +317,6 @@ plant.update();
 
   fanController.update();
 
-  //Serial.println(fanController.getTemperature());
 
 
 

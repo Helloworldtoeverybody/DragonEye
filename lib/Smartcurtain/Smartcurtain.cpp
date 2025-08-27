@@ -2,6 +2,8 @@
 #include<Arduino.h>
 
 
+    bool circle_flag = 0;
+int counter;
 
 SmartCurtains::SmartCurtains(int openPin, int closePin, int b_openPin, int b_closePin, int top)
 : openPin(openPin), closePin(closePin), b_openPin(b_openPin),  b_closePin(b_closePin), top(top), targetPosition(0), currentPosition(0), isMoving(false), lastUpdate(0)
@@ -20,28 +22,27 @@ void SmartCurtains::begin(){
 
     pinMode(top, INPUT);
 
+    stop();
+
 }
 
 
 void SmartCurtains::open() {
 
 
-    digitalWrite(openPin, HIGH);
+    digitalWrite(openPin, 200);
     digitalWrite(closePin, LOW);
 
-    analogWrite(b_openPin, 255);
-    analogWrite(b_closePin, 0);
-    //openning till achieving highest level
 
 }
 
 void SmartCurtains::close() {
-    digitalWrite(openPin, LOW);
-    digitalWrite(closePin, HIGH);
 
-    analogWrite(b_openPin, 0);
-    analogWrite(b_closePin, 155);
-    isMoving = true;
+    digitalWrite(openPin, LOW);
+    digitalWrite(closePin, 200);
+
+
+ 
 
 }
 
@@ -51,48 +52,34 @@ void SmartCurtains::stop() {
     digitalWrite(openPin, LOW);
     digitalWrite(closePin, LOW);
 
-    analogWrite(b_openPin, 0);
-    analogWrite(b_closePin, 0);
-    
-    isMoving = false;
+  
 }
 
-
-void SmartCurtains::setPosition(int pos) {
-    pos = constrain(pos, 0, 100);
-    if (pos > currentPosition) {
-        open();
-    } else if (pos < currentPosition) {
-        close();
-    }
-    targetPosition = pos;
-}
 
 void SmartCurtains::update() {
 
-    top_point = !digitalRead(top);//achieving top level detector
 
+    bool circle = !digitalRead(top);//achieving top level detector
 
-    if (change_flag){
-        top_flag  =0;
-        timer = millis();
-        if(millis()-timer > 4000){
-            if(top_point){
-                top_flag = 1;
+    if (circle and !circle_flag){
+        counter++;
+        circle_flag = 1;
+    }
+    if(!circle){
+        circle_flag = 0;
+    }
+ 
 
-    
-}
-        }
-    }    
-
-
-
-
-if(top_flag){
+ if(counter == top_point){
     stop();
-    top_flag = 0;
-}
+    counter = 0;
+   }
+   
+
+
+
 
 }
+
 
 
